@@ -8,7 +8,7 @@ import type { ReviewTask, ReviewStatus } from '../../types/review';
 const { RangePicker } = DatePicker;
 
 export default function ReviewHistoryPage() {
-  const statusText: Record<ReviewStatus, string> = { pending: '待审', approved: '通过', rejected: '拒绝' };
+  const statusText: Record<ReviewStatus, string> = { pending: '待审', approved: '通过', rejected: '拒绝', ignored: '忽略' };
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ReviewTask[]>([]);
   const [total, setTotal] = useState(0);

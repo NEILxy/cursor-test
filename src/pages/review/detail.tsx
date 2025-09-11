@@ -48,7 +48,7 @@ export default function ReviewDetailPage() {
         <Descriptions.Item label="来源">{task.source}</Descriptions.Item>
         <Descriptions.Item label="创建时间">{dayjs(task.createdAt).format('YYYY-MM-DD HH:mm')}</Descriptions.Item>
         <Descriptions.Item label="风险标签">{task.riskTags?.map((t) => <Tag key={t}>{t}</Tag>)}</Descriptions.Item>
-        <Descriptions.Item label="状态">{{ pending: '待审', approved: '通过', rejected: '拒绝' }[task.status]}</Descriptions.Item>
+        <Descriptions.Item label="状态">{{ pending: '待审', approved: '通过', rejected: '拒绝', ignored: '忽略' }[task.status]}</Descriptions.Item>
       </Descriptions>
       <Space style={{ marginTop: 12 }}>
         <Button type="primary" onClick={() => setOpen('approve')}>通过</Button>

@@ -1,5 +1,5 @@
 import { Layout, Menu, Button } from 'antd';
-import { MenuFoldOutlined, MenuUnfoldOutlined, DashboardOutlined, UnorderedListOutlined, HistoryOutlined } from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined, DashboardOutlined, UnorderedListOutlined, HistoryOutlined, RobotOutlined } from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '../../store/settings';
 import { useAuthStore } from '../../store/auth';
@@ -15,6 +15,7 @@ export default function AppLayout() {
   const items = [
     { key: '/', icon: <DashboardOutlined />, label: '仪表盘', onClick: () => navigate('/') },
     { key: '/review/queue', icon: <UnorderedListOutlined />, label: '审核队列', onClick: () => navigate('/review/queue') },
+    { key: '/review/ai-review', icon: <RobotOutlined />, label: 'AI对话审核', onClick: () => navigate('/review/ai-review') },
     { key: '/review/history', icon: <HistoryOutlined />, label: '历史记录', onClick: () => navigate('/review/history') },
   ];
 
