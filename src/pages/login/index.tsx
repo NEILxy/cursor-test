@@ -1,4 +1,4 @@
-import { Card, Form, Input, Button, Typography } from 'antd';
+import { Card, Form, Input, Button, Typography, message } from 'antd';
 import { useAuthStore } from '../../store/auth';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -12,7 +12,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(values);
+      message.success('登录成功');
       navigate('/');
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.message || error?.message || '登录失败，请检查用户名和密码';
+      message.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -21,8 +25,8 @@ export default function LoginPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Card title="人工审核管理后台" style={{ width: 360 }}>
-        <Typography.Paragraph type="secondary">使用用户名模拟角色：admin 为管理员，其它为审核员。</Typography.Paragraph>
-        <Form layout="vertical" onFinish={onFinish} initialValues={{ username: 'reviewer', password: '123456' }}>
+        <Typography.Paragraph type="secondary">请输入正确的用户名和密码进行登录。</Typography.Paragraph>
+        <Form layout="vertical" onFinish={onFinish} initialValues={{ username: 'admin', password: '123456' }}>
           <Form.Item name="username" label="用户名" rules={[{ required: true, message: '请输入用户名' }]}>
             <Input placeholder="admin 或 reviewer" />
           </Form.Item>
