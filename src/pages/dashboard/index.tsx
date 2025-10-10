@@ -2,10 +2,12 @@ import { Card, Statistic, Row, Col, Button, message } from 'antd';
 import { listTasks } from '../../api/review';
 import { testAuthApi } from '../../api/auth';
 import { useEffect, useState } from 'react';
+import { useAuthStore } from '../../store/auth';
 
 export default function DashboardPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
+  const token = useAuthStore((s) => s.token);
 
   useEffect(() => {
     (async () => {
@@ -40,6 +42,21 @@ export default function DashboardPage() {
             }}
           >
             调用 /auth/test（测试鉴权）
+          </Button>
+        </Col>
+        <Col style={{ marginLeft: 12 }}>
+          <Button
+            onClick={() => {
+              const t = token;
+              if (!t) {
+                messageApi.error('未获取到登录令牌，请重新登录');
+                return;
+              }
+              const target = `http://localhost:5174/?token=${encodeURIComponent(t)}`;
+              window.location.href = target;
+            }}
+          >
+            进入数据大屏（5174）
           </Button>
         </Col>
       </Row>

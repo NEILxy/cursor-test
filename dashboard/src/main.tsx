@@ -4,9 +4,11 @@ import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import { ConfigProvider, theme } from 'antd'
 import { router } from './router'
+import { useAuthStore } from './store/auth'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    {(() => { useAuthStore.getState().initializeAuth() })()}
     <ConfigProvider
       theme={{
         algorithm: theme.defaultAlgorithm,

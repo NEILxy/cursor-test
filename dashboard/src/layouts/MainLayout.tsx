@@ -16,6 +16,7 @@ export default function MainLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const logout = useAuthStore((s) => s.logout)
+  const username = useAuthStore((s) => s.username)
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken()
@@ -28,6 +29,7 @@ export default function MainLayout() {
       </Sider>
       <Layout>
         <Header style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', background: colorBgContainer }}>
+          <span style={{ padding: '0 12px' }}>您好，{username ?? '用户'}</span>
           <span onClick={() => { logout(); navigate('/login') }} style={{ cursor: 'pointer', padding: '0 12px' }}>
             <LogoutOutlined /> 退出登录
           </span>
