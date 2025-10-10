@@ -10,10 +10,33 @@ interface AuthState {
   logout: () => void;
   fetchUserInfo: () => Promise<void>;
   isFetchingUser: boolean;
+  initializeAuth: () => void;
 }
 
+// 从 localStorage 获取 token
+const getStoredToken = (): string | null => {
+  try {
+    return localStorage.getItem('auth_token');
+  } catch {
+    return null;
+  }
+};
+
+// 保存 token 到 localStorage
+const setStoredToken = (token: string | null): void => {
+  try {
+    if (token) {
+      localStorage.setItem('auth_token', token);
+    } else {
+      localStorage.removeItem('auth_token');
+    }
+  } catch {
+    // 忽略 localStorage 错误
+  }
+};
+
 export const useAuthStore = create<AuthState>((set, get) => ({
-  token: null,
+  token: getStoredToken(),
   role: null,
   username: null,
   isFetchingUser: false,
@@ -24,6 +47,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (!token) {
         throw new Error('登录响应缺少 token');
       }
+      // 保存 token 到 localStorage
+      setStoredToken(token);
       // 标记开始获取用户信息，先保存 token，避免初始化重复拉取
       set({ token, isFetchingUser: true });
       await get().fetchUserInfo();
@@ -44,12 +69,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error) {
       console.error('Failed to fetch user info:', error);
       // 如果获取用户信息失败，清除token
+      setStoredToken(null);
       set({ token: null, role: null, username: null });
       throw error;
     }
   },
   logout() {
+    setStoredToken(null);
     set({ token: null, role: null, username: null });
+  },
+  initializeAuth() {
+    const token = getStoredToken();
+    if (token) {
+      set({ token });
+      // 如果有 token，尝试获取用户信息
+      get().fetchUserInfo().catch(() => {
+        // 如果获取用户信息失败，清除无效的 token
+        setStoredToken(null);
+        set({ token: null, role: null, username: null });
+      });
+    }
   },
 }));
 

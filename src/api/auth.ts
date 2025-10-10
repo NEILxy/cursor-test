@@ -17,3 +17,9 @@ export async function getUserInfoApi(): Promise<UserInfo> {
   const role = username === 'admin' ? 'admin' : 'reviewer';
   return { username, role };
 }
+
+// 测试鉴权用的接口，验证 Authorization 头是否随请求发送
+export async function testAuthApi(): Promise<string> {
+  const response = await apiClient.get('/auth/test', { responseType: 'text' });
+  return response.data as unknown as string;
+}

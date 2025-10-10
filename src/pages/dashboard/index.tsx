@@ -1,5 +1,6 @@
-import { Card, Statistic, Row, Col } from 'antd';
+import { Card, Statistic, Row, Col, Button, message } from 'antd';
 import { listTasks } from '../../api/review';
+import { testAuthApi } from '../../api/auth';
 import { useEffect, useState } from 'react';
 
 export default function DashboardPage() {
@@ -16,12 +17,31 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <Row gutter={16}>
-      <Col span={6}><Card><Statistic title="总任务" value={stats.total} /></Card></Col>
-      <Col span={6}><Card><Statistic title="待审核" value={stats.pending} /></Card></Col>
-      <Col span={6}><Card><Statistic title="已通过" value={stats.approved} /></Card></Col>
-      <Col span={6}><Card><Statistic title="已拒绝" value={stats.rejected} /></Card></Col>
-    </Row>
+    <>
+      <Row gutter={16}>
+        <Col span={6}><Card><Statistic title="总任务" value={stats.total} /></Card></Col>
+        <Col span={6}><Card><Statistic title="待审核" value={stats.pending} /></Card></Col>
+        <Col span={6}><Card><Statistic title="已通过" value={stats.approved} /></Card></Col>
+        <Col span={6}><Card><Statistic title="已拒绝" value={stats.rejected} /></Card></Col>
+      </Row>
+      <Row style={{ marginTop: 16 }}>
+        <Col>
+          <Button
+            type="primary"
+            onClick={async () => {
+              try {
+                const text = await testAuthApi();
+                message.success(`接口返回：${text}`);
+              } catch (e) {
+                message.error('请求失败，请检查是否已登录或查看 Network 请求头');
+              }
+            }}
+          >
+            调用 /auth/test（测试鉴权）
+          </Button>
+        </Col>
+      </Row>
+    </>
   );
 }
 
