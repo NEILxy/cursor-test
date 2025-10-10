@@ -79,6 +79,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ token: null, role: null, username: null });
   },
   initializeAuth() {
+    // 支持从 URL ?token=... 注入（来自 5174 的单点登录）
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlToken = params.get('token');
+      if (urlToken) {
+        setStoredToken(urlToken);
+        set({ token: urlToken });
+        const cleanUrl = window.location.origin + window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+      }
+    } catch {}
+
     const token = getStoredToken();
     if (token) {
       set({ token });

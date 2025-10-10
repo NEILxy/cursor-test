@@ -30,6 +30,17 @@ export default function MainLayout() {
       <Layout>
         <Header style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', background: colorBgContainer }}>
           <span style={{ padding: '0 12px' }}>您好，{username ?? '用户'}</span>
+          <span
+            onClick={() => {
+              const token = useAuthStore.getState().token
+              if (!token) return
+              const target = `http://localhost:5173/?token=${encodeURIComponent(token)}`
+              window.location.href = target
+            }}
+            style={{ cursor: 'pointer', padding: '0 12px' }}
+          >
+            前往 5173
+          </span>
           <span onClick={() => { logout(); navigate('/login') }} style={{ cursor: 'pointer', padding: '0 12px' }}>
             <LogoutOutlined /> 退出登录
           </span>
