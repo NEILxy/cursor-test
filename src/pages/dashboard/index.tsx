@@ -4,6 +4,7 @@ import { testAuthApi } from '../../api/auth';
 import { useEffect, useState } from 'react';
 
 export default function DashboardPage() {
+  const [messageApi, contextHolder] = message.useMessage();
   const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function DashboardPage() {
 
   return (
     <>
+      {contextHolder}
       <Row gutter={16}>
         <Col span={6}><Card><Statistic title="总任务" value={stats.total} /></Card></Col>
         <Col span={6}><Card><Statistic title="待审核" value={stats.pending} /></Card></Col>
@@ -31,9 +33,9 @@ export default function DashboardPage() {
             onClick={async () => {
               try {
                 const text = await testAuthApi();
-                message.success(`接口返回：${text}`);
+                messageApi.success(`接口返回：${text}`);
               } catch (e) {
-                message.error('请求失败，请检查是否已登录或查看 Network 请求头');
+                messageApi.error('请求失败，请检查是否已登录或查看 Network 请求头');
               }
             }}
           >

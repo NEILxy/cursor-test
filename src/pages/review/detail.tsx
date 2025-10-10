@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { useAuthStore } from '../../store/auth';
 
 export default function ReviewDetailPage() {
+  const [messageApi, contextHolder] = message.useMessage();
   const { id = '' } = useParams();
   const [task, setTask] = useState<ReviewTask | undefined>();
   const [reason, setReason] = useState('');
@@ -29,12 +30,12 @@ export default function ReviewDetailPage() {
 
   const doApprove = async () => {
     await approveTask(id, username || '', reason || '同意');
-    message.success('已通过');
+    messageApi.success('已通过');
     navigate(-1);
   };
   const doReject = async () => {
     await rejectTask(id, username || '', reason || '不合规');
-    message.success('已拒绝');
+    messageApi.success('已拒绝');
     navigate(-1);
   };
 
@@ -42,6 +43,7 @@ export default function ReviewDetailPage() {
 
   return (
     <Card title={`任务详情 #${task.id}`} extra={<Space><span>快捷键：A 通过 / D 拒绝</span></Space>}>
+      {contextHolder}
       <Descriptions column={1} bordered size="small">
         <Descriptions.Item label="标题">{task.title}</Descriptions.Item>
         <Descriptions.Item label="内容">{task.content}</Descriptions.Item>

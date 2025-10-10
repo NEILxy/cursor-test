@@ -10,6 +10,7 @@ import { useAuthStore } from '../../store/auth';
 const { RangePicker } = DatePicker;
 
 export default function ReviewQueuePage() {
+  const [messageApi, contextHolder] = message.useMessage();
   const statusText: Record<ReviewStatus, string> = { pending: '待审', approved: '通过', rejected: '拒绝', ignored: '忽略' };
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ReviewTask[]>([]);
@@ -54,8 +55,8 @@ export default function ReviewQueuePage() {
       render: (_, row) => (
         <Space>
           <Button size="small" onClick={() => navigate(`/review/detail/${row.id}`)}>详情</Button>
-          <Button size="small" type="primary" onClick={async () => { await approveTask(row.id, username || ''); message.success('已通过'); fetchData(); }}>通过</Button>
-          <Button size="small" danger onClick={async () => { await rejectTask(row.id, username || '', '批量/单条操作'); message.success('已拒绝'); fetchData(); }}>拒绝</Button>
+          <Button size="small" type="primary" onClick={async () => { await approveTask(row.id, username || ''); messageApi.success('已通过'); fetchData(); }}>通过</Button>
+          <Button size="small" danger onClick={async () => { await rejectTask(row.id, username || '', '批量/单条操作'); messageApi.success('已拒绝'); fetchData(); }}>拒绝</Button>
         </Space>
       ),
     },
@@ -68,13 +69,13 @@ export default function ReviewQueuePage() {
 
   const batchApprove = async () => {
     await Promise.all(selectedRowKeys.map((id) => approveTask(String(id), username || '')));
-    message.success('批量通过完成');
+    messageApi.success('批量通过完成');
     setSelectedRowKeys([]);
     fetchData();
   };
   const batchReject = async () => {
     await Promise.all(selectedRowKeys.map((id) => rejectTask(String(id), username || '', '批量拒绝')));
-    message.success('批量拒绝完成');
+    messageApi.success('批量拒绝完成');
     setSelectedRowKeys([]);
     fetchData();
   };
@@ -111,6 +112,7 @@ export default function ReviewQueuePage() {
         </Space>
       }
     >
+      {contextHolder}
       <Table
         rowKey="id"
         loading={loading}

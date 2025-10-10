@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
 export default function LoginPage() {
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const [loading, setLoading] = useState(false);
@@ -12,11 +13,11 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login(values);
-      message.success('登录成功');
+      messageApi.success('登录成功');
       navigate('/');
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || error?.message || '登录失败，请检查用户名和密码';
-      message.error(errorMessage);
+      messageApi.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -24,6 +25,7 @@ export default function LoginPage() {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {contextHolder}
       <Card title="人工审核管理后台" style={{ width: 360 }}>
         <Typography.Paragraph type="secondary">请输入正确的用户名和密码进行登录。</Typography.Paragraph>
         <Form layout="vertical" onFinish={onFinish} initialValues={{ username: 'admin', password: '123456' }}>

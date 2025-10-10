@@ -133,6 +133,7 @@ const getStatusText = (status: ReviewStatus) => {
 };
 
 const AIReviewPage: React.FC = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<AIReviewRecord[]>([]);
@@ -174,7 +175,7 @@ const AIReviewPage: React.FC = () => {
       setTotal(filteredData.length);
       setData(filteredData);
     } catch (error) {
-      message.error('加载数据失败');
+      messageApi.error('加载数据失败');
     } finally {
       setLoading(false);
     }
@@ -219,15 +220,15 @@ const AIReviewPage: React.FC = () => {
 
   // 操作处理
   const handleView = (record: AIReviewRecord) => {
-    message.info(`查看记录: ${record.reviewId}`);
+    messageApi.info(`查看记录: ${record.reviewId}`);
   };
 
   const handleReview = (record: AIReviewRecord) => {
-    message.info(`审核记录: ${record.reviewId}`);
+    messageApi.info(`审核记录: ${record.reviewId}`);
   };
 
   const handleMark = (record: AIReviewRecord) => {
-    message.info(`标记记录: ${record.reviewId}`);
+    messageApi.info(`标记记录: ${record.reviewId}`);
   };
 
   const columns: ColumnsType<AIReviewRecord> = [
@@ -323,6 +324,7 @@ const AIReviewPage: React.FC = () => {
 
   return (
     <div style={{ padding: '24px' }}>
+      {contextHolder}
       <Card title="AI对话审核" style={{ marginBottom: 16 }}>
         <Form
           form={form}
