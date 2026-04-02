@@ -1,5 +1,5 @@
 import { Layout, Menu, Button } from 'antd';
-import { MenuFoldOutlined, MenuUnfoldOutlined, DashboardOutlined, UnorderedListOutlined, HistoryOutlined, RobotOutlined } from '@ant-design/icons';
+import { MenuFoldOutlined, MenuUnfoldOutlined, DashboardOutlined, UnorderedListOutlined, HistoryOutlined, RobotOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsStore } from '../../store/settings';
 import { useAuthStore } from '../../store/auth';
@@ -10,16 +10,27 @@ export default function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { collapsed, setCollapsed } = useSettingsStore();
-  const { role, username, logout } = useAuthStore();
+  const { username, isGuest, logout } = useAuthStore();
 
-  const items = [
-    { key: '/', icon: <DashboardOutlined />, label: '仪表盘', onClick: () => navigate('/') },
-    { key: '/review/queue', icon: <UnorderedListOutlined />, label: '审核队列', onClick: () => navigate('/review/queue') },
-    { key: '/review/ai-review', icon: <RobotOutlined />, label: 'AI对话审核', onClick: () => navigate('/review/ai-review') },
-    { key: '/review/history', icon: <HistoryOutlined />, label: '历史记录', onClick: () => navigate('/review/history') },
+  // 根据用户角色定义菜单项
+  const allItems = [
+    { key: '/', icon: <DashboardOutlined />, label: '仪表盘' },
+    { key: '/review/queue', icon: <UnorderedListOutlined />, label: '审核队列' },
+    { key: '/review/ai-review', icon: <RobotOutlined />, label: 'AI 对话审核' },
+    { key: '/review/history', icon: <HistoryOutlined />, label: '历史记录' },
+    { key: '/about', icon: <InfoCircleOutlined />, label: '系统介绍' },
   ];
 
-  const allowedKeys = role === 'admin' ? items.map((i) => i.key) : items.map((i) => i.key); // 这里可扩展按角色控制
+  // 游客只能看到系统介绍菜单
+  const items = isGuest 
+    ? allItems.filter(item => item.key === '/about')
+    : allItems;
+
+  // 添加点击事件
+  const itemsWithClick = items.map(item => ({
+    ...item,
+    onClick: () => navigate(item.key),
+  }));
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -31,14 +42,16 @@ export default function AppLayout() {
           theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
-          items={items.filter((i) => allowedKeys.includes(i.key))}
+          items={itemsWithClick}
         />
       </Sider>
       <Layout>
         <Header style={{ background: '#fff', padding: '0 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Button type="text" onClick={() => setCollapsed(!collapsed)} icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />} />
           <div>
-            <span style={{ marginRight: 12 }}>您好，{username}</span>
+            <span style={{ marginRight: 12 }}>
+              {isGuest ? '游客模式' : `您好，${username}`}
+            </span>
             <Button onClick={() => { logout(); navigate('/login'); }}>退出登录</Button>
           </div>
         </Header>
@@ -49,5 +62,3 @@ export default function AppLayout() {
     </Layout>
   );
 }
-
-

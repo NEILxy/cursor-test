@@ -1,4 +1,4 @@
-import { Card, Form, Input, Button, Typography, message } from 'antd';
+import { Card, Form, Input, Button, Typography, message, Divider } from 'antd';
 import { useAuthStore } from '../../store/auth';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -6,7 +6,7 @@ import { useState } from 'react';
 export default function LoginPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, loginAsGuest } = useAuthStore();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values: { username: string; password: string }) => {
@@ -17,6 +17,20 @@ export default function LoginPage() {
       navigate('/');
     } catch (error: any) {
       const errorMessage = error?.response?.data?.message || error?.message || '登录失败，请检查用户名和密码';
+      messageApi.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      await loginAsGuest();
+      messageApi.success('游客登录成功');
+      navigate('/about');
+    } catch (error: any) {
+      const errorMessage = error?.message || '游客登录失败';
       messageApi.error(errorMessage);
     } finally {
       setLoading(false);
@@ -37,9 +51,11 @@ export default function LoginPage() {
           </Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>登录</Button>
         </Form>
+        <Divider>或</Divider>
+        <Button onClick={handleGuestLogin} block loading={loading}>
+          游客模式
+        </Button>
       </Card>
     </div>
   );
 }
-
-

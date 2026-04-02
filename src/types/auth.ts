@@ -1,4 +1,4 @@
-export type UserRole = 'reviewer' | 'admin';
+export type UserRole = 'reviewer' | 'admin' | 'guest';
 
 export interface LoginRequest {
   username: string;

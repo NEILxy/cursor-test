@@ -2,18 +2,24 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import type { ReactElement } from 'react';
 import AppLayout from '../components/Layout/AppLayout';
 import LoginPage from '../pages/login';
-import DashboardPage from '../pages/dashboard';
 import ReviewQueuePage from '../pages/review/queue.tsx';
 import ReviewDetailPage from '../pages/review/detail.tsx';
 import ReviewHistoryPage from '../pages/review/history.tsx';
 import AIReviewPage from '../pages/review/ai-review.tsx';
+import AboutPage from '../pages/about';
 import { useAuthStore } from '../store/auth';
 
-function RequireAuth({ children, roles }: { children: ReactElement; roles?: Array<'reviewer' | 'admin'> }) {
+function RequireAuth({ children, roles }: { children: ReactElement; roles?: Array<'reviewer' | 'admin' | 'guest'> }) {
   const { token, role } = useAuthStore();
   if (!token) return <Navigate to="/login" replace />;
   if (roles && role && !roles.includes(role)) return <Navigate to="/" replace />;
   return children;
+}
+
+// 首页重定向组件：根据用户类型跳转到不同页面
+function HomeRedirect() {
+  const { isGuest } = useAuthStore();
+  return <Navigate to={isGuest ? '/about' : '/'} replace />;
 }
 
 const router = createBrowserRouter([
@@ -29,7 +35,8 @@ const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <DashboardPage /> },
+      { index: true, element: <HomeRedirect /> },
+      { path: 'about', element: <AboutPage /> },
       {
         path: 'review',
         children: [
@@ -46,5 +53,3 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
-
-
